@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@600&display=swap');
+
+#h1 {
+    color: blue;
+}
+
+.guessContainer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgb(196, 196, 196);
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.guess-row {
+    display: flex;
+    justify-content: center;
+    margin: 5px 0;
+}
+
+.guess-box {
+    width: 40px;
+    height: 40px;
+    margin: 4px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.submittedGuesses {
+    text-align: center;
+}
