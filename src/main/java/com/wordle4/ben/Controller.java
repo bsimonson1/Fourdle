@@ -1,5 +1,7 @@
 package com.wordle4.ben;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -73,12 +76,32 @@ public class Controller {
 
         return answer;
     }
+    public static Map<String, Integer> grabPossibleAnswerMap() {
+        Map<String, Integer> possibleAnswerMap = new HashMap();
+        String  guessFilePath = "JavaWordle4/4-letter-words-processed-new.txt";
+        int counter = 0;
+        try (Scanner scanner = new Scanner(new File(guessFilePath))) {
+            while (scanner.hasNextLine()) {
+                String line = scanner.nextLine();
+                // Process each line here
+                possibleAnswerMap.put(line, counter);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("File not found: " + e.getMessage());
+        }
+        return possibleAnswerMap;
+
+    }
 	// check the entry (return a sequence of XMO for incorrect, correct but wrong position, or correct right position)
 	public static String entryCheck(String s) {
         // Let's just add an example word here for the day called LOVE ( we will change this once we get a list of 4 letter words)
         String answer = grabAnswer();
         String check = "XXXX";
-
+        Map<String, Integer> possibleAnswerMap = new HashMap();
+        possibleAnswerMap = grabPossibleAnswerMap();
+        if (!possibleAnswerMap.containsKey(s)) {
+            return "----";
+        }
         // int matchedCounter = 0;
         StringBuilder g = new StringBuilder(s);
 
@@ -115,7 +138,7 @@ public class Controller {
                             sb.setCharAt(i, 'X');
                         }
                     }
-                    check = sb.toString(); // Update the position of the M
+                    check = sb.toString(); // Update the position of the M (in the event there are multiple of the same character in the incorrect spot in the guessed word but not in the answer word)
                 }
             }
         }
