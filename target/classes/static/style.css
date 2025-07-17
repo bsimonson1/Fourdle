@@ -33,3 +33,42 @@
 .submittedGuesses {
     text-align: center;
 }
+
+.keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: rgb(196, 196, 196);
+}
+
+.guess-box-yellow {
+    width: 40px;
+    height: 40px;
+    margin: 4px;
+    font-size: 24px;
+    text-align: center;
+    background-color: yellow;
+}
+
+.guess-box-right {
+    width: 40px;
+    height: 40px;
+    margin: 4px;
+    font-size: 24px;
+    text-align: center;
+    background-color: green;
+}
+
+.guess-box-wrong {
+    width: 40px;
+    height: 40px;
+    margin: 4px;
+    font-size: 24px;
+    text-align: center;
+    background-color: gray;
+}

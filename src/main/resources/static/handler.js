@@ -1,4 +1,35 @@
+function setupKeyboard() {
+    const newRow = document.createElement("div");
+    newRow.classList.add("keyboard");
+    newRow.id = "keyboardDiv";
+    // create 26 buttons for each key on the keyboard
+    const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+    for (let i = 0; i < 26; i++) {
+        let newButton = document.createElement("button");
+        newButton.id = letters[i];
+        newButton.value = letters[i];
+        newButton.classList.add('guess-box');
+        newButton.innerText = letters[i];
+        newButton.onclick = "registerKeyboardInput()"
+        newRow.appendChild(newButton);
+    }
+    const container = document.getElementById("keyboardContainer");
+    container.appendChild(newRow);
+}
+
+function registerKeyboardInput() {
+    // now add an event listener to check for when a button is pressed (add it to the guess form)
+    const buttonClick = document.getElementById("letterButtons");
+    buttonClick.addEventListener("click", (event) => {
+        event.preventDefault();
+        let value = buttonClick.value;
+        console.log(`Button clicked: ${value}`);
+    })
+}
+
 document.addEventListener("DOMContentLoaded", () => {
+    // add a keyboard to allow users to type in answers
+    setupKeyboard();
     const submitted = document.getElementById("submitButton");
     let counter = 0;
     let guesses = 0;
