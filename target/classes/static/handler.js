@@ -1,4 +1,5 @@
-function setupKeyboard() {
+document.addEventListener("DOMContentLoaded", () => {
+    // add a keyboard to allow users to type in answers
     const newRow = document.createElement("div");
     newRow.classList.add("keyboard");
     newRow.id = "keyboardDiv";
@@ -10,29 +11,53 @@ function setupKeyboard() {
         newButton.value = letters[i];
         newButton.classList.add('guess-box');
         newButton.innerText = letters[i];
-        newButton.onclick = "registerKeyboardInput()"
+        newButton.onclick = registerKeyboardInput.bind(letters[i]);
         newRow.appendChild(newButton);
     }
     const container = document.getElementById("keyboardContainer");
     container.appendChild(newRow);
-}
 
-function registerKeyboardInput() {
-    // now add an event listener to check for when a button is pressed (add it to the guess form)
-    const buttonClick = document.getElementById("letterButtons");
-    buttonClick.addEventListener("click", (event) => {
-        event.preventDefault();
-        let value = buttonClick.value;
-        console.log(`Button clicked: ${value}`);
-    })
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-    // add a keyboard to allow users to type in answers
-    setupKeyboard();
     const submitted = document.getElementById("submitButton");
     let counter = 0;
     let guesses = 0;
+    let recentGuesses = [];
+    // overFlow counter for when all of the guess entries are made and we want to update the other guessEntries
+    let overFlowCounter = 0;
+    // this is to register keyboard input 
+    function registerKeyboardInput(element) {
+        let keyValue = element.target.id;
+        if (overFlowCounter > 3) {
+            overFlowCounter = 0;
+        }
+        
+        // now add an event listener to check for when a button is pressed (add it to the guess form)
+        console.log(`Selected key value: ${keyValue}`);
+        if (overFlowCounter == 0) {
+            document.getElementById(`guessEntry1${counter}`).value = keyValue;
+        } else if (overFlowCounter == 1) {
+            document.getElementById(`guessEntry2${counter}`).value = keyValue;
+        } else if (overFlowCounter == 2) {
+            document.getElementById(`guessEntry3${counter}`).value = keyValue;
+        } else if (overFlowCounter == 3) {
+            document.getElementById(`guessEntry4${counter}`).value = keyValue;
+        }
+        recentGuesses.push(keyValue);
+        overFlowCounter++;
+    }
+    function changeKeyboardColors(result) {
+        for (let i = 0; i < 4; i++) {
+            console.log(`Guess: ${recentGuesses[i]}, is in position ${result[i]}`);
+            if (result[i] == "O") {
+                document.getElementById(recentGuesses[i]).classList.add('guess-box-green');
+            } else if (result[i] == "M") {
+                document.getElementById(recentGuesses[i]).classList.add('guess-box-yellow');
+            } else {
+                document.getElementById(recentGuesses[i]).classList.add('guess-box-gray');
+            }
+        }
+        // need to clear the recent guesses for the next guess
+        recentGuesses.length = 0;
+    }
     submitted.addEventListener("click", (event) => {
         event.preventDefault();
         // now we get the letters, make a string, send it to the backend, wait for response with the "XMO" results and then fill in the screen
@@ -55,43 +80,45 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("answer").innerHTML = "Answer not in word list!";
             } else {
                 // show the user their result by dynamically adding HTML elements to show the guess results
-            for (let i = 0; i < result.length; i++) {
-                let counterP = i+1;
-                let idElement = "guessEntry" + counterP.toString() + counter.toString();
-                // set the element to read only
-                document.getElementById(idElement).readOnly = true;
-                if (result[i] == "O") {
-                    document.getElementById(idElement).style.backgroundColor = "green";
-                } else if (result[i] == "M") {
-                    document.getElementById(idElement).style.backgroundColor = "yellow";
-                }
-            }
-            guesses++;
-            const newRow = document.createElement("div");
-            newRow.classList.add("guess-row");
-            newRow.id = "guessRow" + counter;
-            // create new input tags after "removing" the old ones
-            if (result != "OOOO" && guesses <= 5) {
-                counter++;
-                for (let i = 0; i < 4; i++) {
-                    let newInput = document.createElement("input");
-                    // give a unique ID to the new input tag
+                for (let i = 0; i < result.length; i++) {
                     let counterP = i+1;
-                    let newID = "guessEntry" + counterP.toString() + counter.toString();
-                    newInput.id = newID;
-                    newInput.type = "text";
-                    newInput.maxLength = "1";
-                    newInput.pattern = "[A-Za-z]";
-                    newInput.title = "Letters only"
-                    newInput.required = true;
-                    newInput.classList.add("guess-box");
-                    newRow.appendChild(newInput);
+                    let idElement = "guessEntry" + counterP.toString() + counter.toString();
+                    // set the element to read only
+                    document.getElementById(idElement).readOnly = true;
+                    if (result[i] == "O") {
+                        document.getElementById(idElement).style.backgroundColor = "green";
+                    } else if (result[i] == "M") {
+                        document.getElementById(idElement).style.backgroundColor = "yellow";
+                    }
                 }
-                const container = document.getElementById("guessContainer");
-                container.appendChild(newRow);
-            } else if (guesses > 6) {
-                document.getElementById("answer").innerHTML = "You Lose!";
-            }
+                guesses++;
+                const newRow = document.createElement("div");
+                newRow.classList.add("guess-row");
+                newRow.id = "guessRow" + counter;
+                // create new input tags after "removing" the old ones
+                if (result != "OOOO" && guesses <= 5) {
+                    counter++;
+                    for (let i = 0; i < 4; i++) {
+                        let newInput = document.createElement("input");
+                        // give a unique ID to the new input tag
+                        let counterP = i+1;
+                        let newID = "guessEntry" + counterP.toString() + counter.toString();
+                        newInput.id = newID;
+                        newInput.type = "text";
+                        newInput.maxLength = "1";
+                        newInput.pattern = "[A-Za-z]";
+                        newInput.title = "Letters only"
+                        newInput.required = true;
+                        newInput.classList.add("guess-box");
+                        newRow.appendChild(newInput);
+                    }
+                    const container = document.getElementById("guessContainer");
+                    container.appendChild(newRow);
+                } else if (guesses > 6) {
+                    document.getElementById("answer").innerHTML = "You Lose!";
+                }
+                // now lets change the keyboard colors to reflect the guesses made by the user
+                changeKeyboardColors(result);
             }
         });
     })
