@@ -43,8 +43,8 @@ public class Controller {
     // grab the new answer of the day (need time logic)
     public static String grabAnswer() {
         String answer = "BADD"; // default
-        Path datePath = Paths.get("JavaWordle4/ben/src/main/java/com/wordle4/ben/date.txt");
-        Path wordListPath = Paths.get("JavaWordle4/ben/src/main/java/com/wordle4/ben/WORDLEANSWERS.txt");
+        Path datePath = Paths.get("src/main/java/com/wordle4/ben/date.txt");
+        Path wordListPath = Paths.get("src/main/java/com/wordle4/ben/WORDLEANSWERS.txt");
 
         try {
             // Read the current stored date
@@ -78,7 +78,7 @@ public class Controller {
     }
     public static Map<String, Integer> grabPossibleAnswerMap() {
         Map<String, Integer> possibleAnswerMap = new HashMap();
-        String  guessFilePath = "JavaWordle4/4-letter-words-processed-new.txt";
+        String  guessFilePath = "4-letter-words-processed.txt";
         int counter = 0;
         try (Scanner scanner = new Scanner(new File(guessFilePath))) {
             while (scanner.hasNextLine()) {

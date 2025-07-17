@@ -10,14 +10,20 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(guess);
         console.log(counter);
         // need to send the guessed word to the backend via a post 
+        // this is an asynchronous operation to send the data that the user entered to the backend for processing
         fetch('/api/guess', { // our route is /api in the controller so we start with that and then we call the next route guess so this is where we are sending the result to
             method: 'POST',
             headers: { 'Content-Type': 'text/plain'}, //plain text package type
             body: guess // this is the variable (guess from above) that we are sending to the backend
         })
-        .then(res => res.text()) // this is the response to ensure we are correctly receiving it and convert it to a string we cna use in js
+        // this parses the returned data (we use text because it was plain text) 
+        .then(res => res.text()) 
+        // now that we have the response body parsed we cana ssign it to a variable for further processing for the frontend now
         .then(result => { //assign the received response to a variable called result
-            // show the user their result by dynamically adding HTML elements to show the guess results
+            if (result == "----") {
+                document.getElementById("answer").innerHTML = "Answer not in word list!";
+            } else {
+                // show the user their result by dynamically adding HTML elements to show the guess results
             for (let i = 0; i < result.length; i++) {
                 let counterP = i+1;
                 let idElement = "guessEntry" + counterP.toString() + counter.toString();
@@ -52,8 +58,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 const container = document.getElementById("guessContainer");
                 container.appendChild(newRow);
-            } else if (guesses >= 5) {
+            } else if (guesses > 6) {
                 document.getElementById("answer").innerHTML = "You Lose!";
+            }
             }
         });
     })
