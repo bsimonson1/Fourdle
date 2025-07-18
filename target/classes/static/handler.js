@@ -1,3 +1,52 @@
+let counter = 0;
+let guesses = 0;
+let recentGuesses = [];
+// overFlow counter for when all of the guess entries are made and we want to update the other guessEntries
+let overFlowCounter = 0;
+// this is to register keyboard input 
+function registerKeyboardInput(element) {
+    let keyValue = element.target.id;
+    if (overFlowCounter > 3) {
+        overFlowCounter = 0;
+    }
+    
+    // now add an event listener to check for when a button is pressed (add it to the guess form)
+    console.log(`Selected key value: ${keyValue}`);
+    if (overFlowCounter == 0) {
+        recentGuesses[0] = keyValue;
+        document.getElementById(`guessEntry1${counter}`).value = keyValue;
+    } else if (overFlowCounter == 1) {
+        recentGuesses[1] = keyValue;
+        document.getElementById(`guessEntry2${counter}`).value = keyValue;
+    } else if (overFlowCounter == 2) {
+        recentGuesses[2] = keyValue;
+        document.getElementById(`guessEntry3${counter}`).value = keyValue;
+    } else if (overFlowCounter == 3) {
+        recentGuesses[3] = keyValue;
+        document.getElementById(`guessEntry4${counter}`).value = keyValue;
+    }
+    overFlowCounter++;
+}
+// if a user uses their mouse to click on the input we want to reset the overFlow counter so that users can use the keyboard from that point
+function resetOverflowPosition(element) {
+    overFlowCounter = element - 1;
+    console.log(`Reset to position ${overFlowCounter}`);
+}
+function changeKeyboardColors(result) {
+    for (let i = 0; i < 4; i++) {
+        console.log(`Guess: ${recentGuesses[i]}, is in position ${result[i]}`);
+        if (result[i] == "O") {
+            document.getElementById(recentGuesses[i]).classList.add('guess-box-green');
+        } else if (result[i] == "M") {
+            document.getElementById(recentGuesses[i]).classList.add('guess-box-yellow');
+        } else {
+            document.getElementById(recentGuesses[i]).classList.add('guess-box-gray');
+        }
+    }
+    // need to clear the recent guesses for the next guess
+    recentGuesses.length = 0;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // add a keyboard to allow users to type in answers
     const newRow = document.createElement("div");
@@ -18,49 +67,6 @@ document.addEventListener("DOMContentLoaded", () => {
     container.appendChild(newRow);
 
     const submitted = document.getElementById("submitButton");
-    let counter = 0;
-    let guesses = 0;
-    let recentGuesses = [];
-    // overFlow counter for when all of the guess entries are made and we want to update the other guessEntries
-    let overFlowCounter = 0;
-    // this is to register keyboard input 
-    function registerKeyboardInput(element) {
-        let keyValue = element.target.id;
-        if (overFlowCounter > 3) {
-            overFlowCounter = 0;
-        }
-        
-        // now add an event listener to check for when a button is pressed (add it to the guess form)
-        console.log(`Selected key value: ${keyValue}`);
-        if (overFlowCounter == 0) {
-            recentGuesses[0] = keyValue;
-            document.getElementById(`guessEntry1${counter}`).value = keyValue;
-        } else if (overFlowCounter == 1) {
-            recentGuesses[1] = keyValue;
-            document.getElementById(`guessEntry2${counter}`).value = keyValue;
-        } else if (overFlowCounter == 2) {
-            recentGuesses[2] = keyValue;
-            document.getElementById(`guessEntry3${counter}`).value = keyValue;
-        } else if (overFlowCounter == 3) {
-            recentGuesses[3] = keyValue;
-            document.getElementById(`guessEntry4${counter}`).value = keyValue;
-        }
-        overFlowCounter++;
-    }
-    function changeKeyboardColors(result) {
-        for (let i = 0; i < 4; i++) {
-            console.log(`Guess: ${recentGuesses[i]}, is in position ${result[i]}`);
-            if (result[i] == "O") {
-                document.getElementById(recentGuesses[i]).classList.add('guess-box-green');
-            } else if (result[i] == "M") {
-                document.getElementById(recentGuesses[i]).classList.add('guess-box-yellow');
-            } else {
-                document.getElementById(recentGuesses[i]).classList.add('guess-box-gray');
-            }
-        }
-        // need to clear the recent guesses for the next guess
-        recentGuesses.length = 0;
-    }
     submitted.addEventListener("click", (event) => {
         event.preventDefault();
         // now we get the letters, make a string, send it to the backend, wait for response with the "XMO" results and then fill in the screen
@@ -112,6 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         newInput.pattern = "[A-Za-z]";
                         newInput.title = "Letters only"
                         newInput.required = true;
+                        newInput.onclick = resetOverflowPosition.bind(newID);
                         newInput.classList.add("guess-box");
                         newRow.appendChild(newInput);
                     }
