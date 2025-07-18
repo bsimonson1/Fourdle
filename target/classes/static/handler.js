@@ -9,7 +9,6 @@ function registerKeyboardInput(element) {
     if (overFlowCounter > 3) {
         overFlowCounter = 0;
     }
-    
     // now add an event listener to check for when a button is pressed (add it to the guess form)
     console.log(`Selected key value: ${keyValue}`);
     if (overFlowCounter == 0) {
@@ -32,11 +31,7 @@ function resetOverflowPosition(element) {
     overFlowCounter = element;
     console.log(`Reset to position ${overFlowCounter}`);
 }
-// this is really really bad but I need to bind the element to the function so that I can get the correct value of the overFlowCounter for guesses after the first...
-function resetOverflowPositionBind(element) {
-    overFlowCounter = element.target.id[element.target.id.length - 2] - 1;
-    console.log(`Reset to position ${overFlowCounter}`);
-}
+// change the background color of the keyboard based on the results of the guess
 function changeKeyboardColors(result) {
     for (let i = 0; i < 4; i++) {
         console.log(`Guess: ${recentGuesses[i]}, is in position ${result[i]}`);
@@ -51,8 +46,7 @@ function changeKeyboardColors(result) {
     // need to clear the recent guesses for the next guess
     recentGuesses.length = 0;
 }
-
-document.addEventListener("DOMContentLoaded", () => {
+function keyboardConfig() {
     // add a keyboard to allow users to type in answers
     const newRow = document.createElement("div");
     newRow.classList.add("keyboard");
@@ -70,7 +64,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const container = document.getElementById("keyboardContainer");
     container.appendChild(newRow);
-
+}
+// wait until the document is fully loaded before we start adding elements to the DOM
+document.addEventListener("DOMContentLoaded", () => {
+    // create the keyboard
+    keyboardConfig();
+    // add an event listener to the submit button
     const submitted = document.getElementById("submitButton");
     submitted.addEventListener("click", (event) => {
         event.preventDefault();
@@ -95,8 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 // show the user their result by dynamically adding HTML elements to show the guess results
                 for (let i = 0; i < result.length; i++) {
-                    let counterP = i+1;
-                    let idElement = "guessEntry" + counterP.toString() + counter.toString();
+                    let idElement = "guessEntry" + (i+1).toString() + counter.toString();
                     // set the element to read only
                     document.getElementById(idElement).readOnly = true;
                     if (result[i] == "O") {
@@ -125,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         newInput.pattern = "[A-Za-z]";
                         newInput.title = "Letters only"
                         newInput.required = true;
-                        newInput.onclick = resetOverflowPositionBind.bind(i);
+                        newInput.addEventListener("click", () => resetOverflowPosition(i));
                         newInput.classList.add("guess-box");
                         newRow.appendChild(newInput);
                     }
@@ -142,5 +140,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     })
 })
-
-// <input type="text" id="guessEntry10" maxlength="1" pattern="[A-Za-z]" title="Letters only" required>
