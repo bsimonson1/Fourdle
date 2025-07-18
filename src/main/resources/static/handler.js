@@ -33,15 +33,18 @@ document.addEventListener("DOMContentLoaded", () => {
         // now add an event listener to check for when a button is pressed (add it to the guess form)
         console.log(`Selected key value: ${keyValue}`);
         if (overFlowCounter == 0) {
+            recentGuesses[0] = keyValue;
             document.getElementById(`guessEntry1${counter}`).value = keyValue;
         } else if (overFlowCounter == 1) {
+            recentGuesses[1] = keyValue;
             document.getElementById(`guessEntry2${counter}`).value = keyValue;
         } else if (overFlowCounter == 2) {
+            recentGuesses[2] = keyValue;
             document.getElementById(`guessEntry3${counter}`).value = keyValue;
         } else if (overFlowCounter == 3) {
+            recentGuesses[3] = keyValue;
             document.getElementById(`guessEntry4${counter}`).value = keyValue;
         }
-        recentGuesses.push(keyValue);
         overFlowCounter++;
     }
     function changeKeyboardColors(result) {
@@ -116,6 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     container.appendChild(newRow);
                 } else if (guesses > 6) {
                     document.getElementById("answer").innerHTML = "You Lose!";
+                } else if (result == "OOOO") {
+                    document.getElementById("answer").innerHTML = "You Win!";
                 }
                 // now lets change the keyboard colors to reflect the guesses made by the user
                 changeKeyboardColors(result);
