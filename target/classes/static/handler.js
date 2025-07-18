@@ -29,7 +29,12 @@ function registerKeyboardInput(element) {
 }
 // if a user uses their mouse to click on the input we want to reset the overFlow counter so that users can use the keyboard from that point
 function resetOverflowPosition(element) {
-    overFlowCounter = element - 1;
+    overFlowCounter = element;
+    console.log(`Reset to position ${overFlowCounter}`);
+}
+// this is really really bad but I need to bind the element to the function so that I can get the correct value of the overFlowCounter for guesses after the first...
+function resetOverflowPositionBind(element) {
+    overFlowCounter = element.target.id[element.target.id.length - 2] - 1;
     console.log(`Reset to position ${overFlowCounter}`);
 }
 function changeKeyboardColors(result) {
@@ -120,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         newInput.pattern = "[A-Za-z]";
                         newInput.title = "Letters only"
                         newInput.required = true;
-                        newInput.onclick = resetOverflowPosition.bind(newID);
+                        newInput.onclick = resetOverflowPositionBind.bind(i);
                         newInput.classList.add("guess-box");
                         newRow.appendChild(newInput);
                     }
