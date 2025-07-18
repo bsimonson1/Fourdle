@@ -98,6 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         document.getElementById(idElement).style.backgroundColor = "green";
                     } else if (result[i] == "M") {
                         document.getElementById(idElement).style.backgroundColor = "yellow";
+                    } else {
+                        document.getElementById(idElement).style.backgroundColor = "gray";
                     }
                 }
                 guesses++;
@@ -124,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     const container = document.getElementById("guessContainer");
                     container.appendChild(newRow);
-                } else if (guesses > 6) {
+                } else if (guesses > 5) {
                     document.getElementById("answer").innerHTML = "You Lose!";
                 } else if (result == "OOOO") {
                     document.getElementById("answer").innerHTML = "You Win!";
