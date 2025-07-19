@@ -1,4 +1,3 @@
-TOTS
 DIPT
 HIOI
 DIVO

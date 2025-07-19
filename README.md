@@ -1,0 +1,3 @@
+- Testing was done using Selenium, Behave (Cucumber Package for Python), and Gherkin.
+- The features folder contains the steps which has all of the test and feature files.
+- The pages folder contains references and the elements from the HTML pages.

@@ -23,11 +23,12 @@
 }
 
 .guess-box {
-    width: 40px;
-    height: 40px;
+    width: 15%;
+    height: 15%;
     margin: 4px;
     font-size: 24px;
     text-align: center;
+    text-transform: uppercase;
 }
 
 .submittedGuesses {
@@ -47,8 +48,8 @@
 }
 
 .guess-box-yellow {
-    width: 40px;
-    height: 40px;
+    width: 15%;
+    height: 15%;
     margin: 4px;
     font-size: 24px;
     text-align: center;
@@ -56,8 +57,8 @@
 }
 
 .guess-box-green {
-    width: 40px;
-    height: 40px;
+    width: 15%;
+    height: 15%;
     margin: 4px;
     font-size: 24px;
     text-align: center;
@@ -65,8 +66,8 @@
 }
 
 .guess-box-gray {
-    width: 40px;
-    height: 40px;
+    width: 15%;
+    height: 15%;
     margin: 4px;
     font-size: 24px;
     text-align: center;

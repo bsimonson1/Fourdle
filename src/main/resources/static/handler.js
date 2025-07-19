@@ -26,6 +26,14 @@ function registerKeyboardInput(element) {
     }
     overFlowCounter++;
 }
+// move to next input button
+function moveToNext(currentInput, nextInputId) {
+  if (currentInput.value.length === currentInput.maxLength) {
+    let nextId = 'guessEntry' + nextInputId.toString();
+    console.log(`Next input ID: ${nextId}`);
+    document.getElementById(nextId).focus();
+  }
+}
 // if a user uses their mouse to click on the input we want to reset the overFlow counter so that users can use the keyboard from that point
 function resetOverflowPosition(element) {
     overFlowCounter = element;
@@ -33,18 +41,55 @@ function resetOverflowPosition(element) {
 }
 // change the background color of the keyboard based on the results of the guess
 function changeKeyboardColors(result) {
-    for (let i = 0; i < 4; i++) {
-        console.log(`Guess: ${recentGuesses[i]}, is in position ${result[i]}`);
-        if (result[i] == "O") {
-            document.getElementById(recentGuesses[i]).classList.add('guess-box-green');
-        } else if (result[i] == "M") {
-            document.getElementById(recentGuesses[i]).classList.add('guess-box-yellow');
-        } else {
-            document.getElementById(recentGuesses[i]).classList.add('guess-box-gray');
+    for (let i = 0; i < result.length; i++) {
+        const key = document.getElementById(recentGuesses[i]);
+        if (!key) continue; // safeguard
+        const classes = key.classList;
+        if (result[i] === "O") {
+            // Always override to green
+            classes.remove('guess-box-yellow', 'guess-box-gray');
+            classes.add('guess-box-green');
+        } else if (result[i] === "M") {
+            // Only set to yellow if not already green
+            if (!classes.contains('guess-box-green')) {
+                classes.remove('guess-box-gray');
+                classes.add('guess-box-yellow');
+            }
+        } else if (result[i] === "X") {
+            // Only set to gray if not green or yellow
+            if (!classes.contains('guess-box-green') && !classes.contains('guess-box-yellow')) {
+                classes.add('guess-box-gray');
+            }
         }
     }
-    // need to clear the recent guesses for the next guess
+
+    // clear guesses for next round
     recentGuesses.length = 0;
+}
+// let just delete from the right most character
+function handleDelete() {
+    console.log("Am I here?");
+    // we just need to remove the element from the previous overflow input and reset the overflow
+    for (let i = 4; i >= 0; i--) {
+        let newID = "guessEntry" + i.toString() + counter.toString();
+        // if this entry element has a value then we delete it and break
+        console.log(`Value to delete: ${document.getElementById(newID).value}`);
+        if (document.getElementById(newID).value) {
+            console.log(`Value to delete: ${document.getElementById(newID).value}`);
+            // delete it and focus to the next input
+            document.getElementById(newID).value = "";
+            // get the new position to focus on
+            let newPos = i-1;
+            if (newPos < 1) {
+                newPos = 1;
+            }
+            let nextId = "guessEntry" + (newPos).toString() + counter.toString();
+            document.getElementById(nextId).focus();
+            console.log(`Next Value: ${nextId}`);
+            overFlowCounter--;
+            break;
+        }
+    }
 }
 function keyboardConfig() {
     // add a keyboard to allow users to type in answers
@@ -62,6 +107,22 @@ function keyboardConfig() {
         newButton.onclick = registerKeyboardInput.bind(letters[i]);
         newRow.appendChild(newButton);
     }
+    // add a delete button
+    let deleteButton = document.createElement("button");
+    deleteButton.id = 'delete';
+    deleteButton.value = 'delete';
+    deleteButton.classList.add('guess-box');
+    deleteButton.innerText = 'DEL';
+    deleteButton.onclick = handleDelete.bind();
+    newRow.appendChild(deleteButton);
+    // add a submit button
+    let submitButton = document.createElement("button");
+    submitButton.id = 'submitButton';
+    submitButton.value = 'enter';
+    submitButton.classList.add('guess-box');
+    submitButton.innerText = 'ENTER';
+    newRow.appendChild(submitButton);
+    // add it to the frontend container
     const container = document.getElementById("keyboardContainer");
     container.appendChild(newRow);
 }
@@ -105,12 +166,12 @@ document.addEventListener("DOMContentLoaded", () => {
                         document.getElementById(idElement).style.backgroundColor = "gray";
                     }
                 }
-                guesses++;
                 const newRow = document.createElement("div");
                 newRow.classList.add("guess-row");
                 newRow.id = "guessRow" + counter;
                 // create new input tags after "removing" the old ones
                 if (result != "OOOO" && guesses <= 5) {
+                    guesses++;
                     counter++;
                     for (let i = 0; i < 4; i++) {
                         let newInput = document.createElement("input");
@@ -125,10 +186,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         newInput.required = true;
                         newInput.addEventListener("click", () => resetOverflowPosition(i));
                         newInput.classList.add("guess-box");
+                        if (counterP != 4) {
+                            let nextInputId = (counterP + 1).toString() + counter.toString();
+                            newInput.addEventListener("keyup", function () {
+                                console.log(`Passed in input ID: ${nextInputId}`);
+                                moveToNext(this, nextInputId);
+                            });
+                        }
                         newRow.appendChild(newInput);
                     }
                     const container = document.getElementById("guessContainer");
                     container.appendChild(newRow);
+                    document.getElementById("answer").innerHTML = "";
                 } else if (guesses > 5) {
                     document.getElementById("answer").innerHTML = "You Lose!";
                 } else if (result == "OOOO") {
