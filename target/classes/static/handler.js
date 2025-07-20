@@ -42,7 +42,7 @@ function resetOverflowPosition(element) {
 // change the background color of the keyboard based on the results of the guess
 function changeKeyboardColors(result) {
     for (let i = 0; i < result.length; i++) {
-        const key = document.getElementById(recentGuesses[i]);
+        const key = document.getElementById(recentGuesses[i].toString().toUpperCase());
         if (!key) continue; // safeguard
         const classes = key.classList;
         if (result[i] === "O") {
@@ -91,6 +91,7 @@ function handleDelete() {
         }
     }
 }
+
 function keyboardConfig() {
     // add a keyboard to allow users to type in answers
     const newRow = document.createElement("div");
@@ -129,7 +130,6 @@ function keyboardConfig() {
     const container = document.getElementById("keyboardContainer");
     container.appendChild(newRow);
 }
-
 function handleSubmission(event) {
     event.preventDefault();
     // now we get the letters, make a string, send it to the backend, wait for response with the "XMO" results and then fill in the screen
@@ -148,12 +148,16 @@ function handleSubmission(event) {
     .then(res => res.text()) 
     // now that we have the response body parsed we cana ssign it to a variable for further processing for the frontend now
     .then(result => { //assign the received response to a variable called result
-        if (result == "----") {
+        if (result.length !== 4) {
+            document.getElementById("answer").innerHTML = "Must be four letters long!";
+        } else if (result == "----") {
             document.getElementById("answer").innerHTML = "Answer not in word list!";
         } else {
             // show the user their result by dynamically adding HTML elements to show the guess results
             for (let i = 0; i < result.length; i++) {
                 let idElement = "guessEntry" + (i+1).toString() + counter.toString();
+                recentGuesses.push(document.getElementById(idElement).value);
+                console.log(`Recent guess: ${recentGuesses[i]}`);
                 // set the element to read only
                 document.getElementById(idElement).readOnly = true;
                 if (result[i] == "O") {
@@ -196,7 +200,8 @@ function handleSubmission(event) {
                 const container = document.getElementById("guessContainer");
                 container.appendChild(newRow);
                 document.getElementById("answer").innerHTML = "";
-            } else if (guesses > 5) {
+                overflowCounter = 0;
+            } else if (guesses > 6) {
                 document.getElementById("answer").innerHTML = "You Lose!";
             } else if (result == "OOOO") {
                 document.getElementById("answer").innerHTML = "You Win!";
@@ -206,7 +211,6 @@ function handleSubmission(event) {
         }
     });
 }
-
 // wait until the document is fully loaded before we start adding elements to the DOM
 document.addEventListener("DOMContentLoaded", () => {
     // create the keyboard

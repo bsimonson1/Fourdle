@@ -99,7 +99,9 @@ public class Controller {
         String check = "XXXX";
         Map<String, Integer> possibleAnswerMap = new HashMap();
         possibleAnswerMap = grabPossibleAnswerMap();
-        if (!possibleAnswerMap.containsKey(s)) {
+        if (s.length() != 4) {
+            return "-";
+        } else if (!possibleAnswerMap.containsKey(s)) {
             return "----";
         }
         // int matchedCounter = 0;
